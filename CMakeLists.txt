@@ -43,9 +43,6 @@ if(TARGET_ARCH STREQUAL "i386")
   set(TARGET_ARCH "i686")
 endif()
 
-# TODO
-set(TARGET_IS_BIG_ENDIAN FALSE)
-
 if((TARGET_ARCH MATCHES "unknown") OR (TARGET_ARCH STREQUAL ""))
   message(FATAL_ERROR "Unknown target arch")
 elseif(TARGET_ARCH MATCHES "64")
@@ -164,7 +161,7 @@ include_directories("${CMAKE_BINARY_DIR}/port/include")
 
 # Set Release optimization to -Og until I fix the -O2 issues
 if(NOT (CMAKE_BUILD_TYPE STREQUAL "Debug"))
-  add_compile_options(-Og)
+  add_compile_options(-O2)
 endif()
 
 # Common CFLAGS

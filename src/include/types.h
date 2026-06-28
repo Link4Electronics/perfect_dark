@@ -328,9 +328,9 @@ struct prop {
 
 struct packedpad {
 #ifdef PLATFORM_BIG_ENDIAN
-	s32 liftnum : 4;
 	s32 flags : 18;
 	s32 room : 10;
+	s32 liftnum : 4;
 #else
 	s32 liftnum : 4;
 	s32 room : 10;
@@ -2347,9 +2347,17 @@ struct gunctrl {
 	/*0x1598*/ struct modeldef *cartmodeldef;
 	/*0x159c*/ u16 handfilenum;
 	/*0x15a0*/ u8 *handmemloadptr;
+#ifndef PLATFORM_N64
+	/*0x15a4*/ uintptr_t handmemloadremaining;
+#else
 	/*0x15a4*/ s32 handmemloadremaining;
+#endif
 	/*0x15a8*/ u8 *memloadptr;
+#ifndef PLATFORM_N64
+	/*0x15ac*/ uintptr_t memloadremaining;
+#else
 	/*0x15ac*/ u32 memloadremaining;
+#endif
 	/*0x15b0*/ u8 masterloadstate;
 	/*0x15b1*/ u8 gunloadstate;
 	/*0x15b2*/ u16 loadfilenum;

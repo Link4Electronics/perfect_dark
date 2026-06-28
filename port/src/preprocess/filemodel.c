@@ -952,8 +952,8 @@ static u8 *relinkPointers(u8 *dst, u8 *src)
 				struct n64_rodata_chrgunfire *src_chrgunfire = src_thing;
 				struct host_rodata_chrgunfire *dst_chrgunfire = dst_thing;
 				dst_chrgunfire->ptr_texture = (resolvePointer(PD_BE32(src_chrgunfire->ptr_texture)));
-				if ((PD_BE32(dst_chrgunfire->ptr_texture) & 0xff000000) == 0x05000000) {
-					gbiAddTexAddr(PD_BE32(dst_chrgunfire->ptr_texture), dst_chrgunfire->ptr_texture);
+				if ((PD_BE32(src_chrgunfire->ptr_texture) & 0xff000000) == 0x05000000) {
+					gbiAddTexAddr(PD_BE32(src_chrgunfire->ptr_texture), dst_chrgunfire->ptr_texture);
 				}
 				break;
 			}

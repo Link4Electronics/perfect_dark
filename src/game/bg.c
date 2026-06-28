@@ -3348,8 +3348,14 @@ s32 bgPopulateVtxBatchType(s32 roomnum, struct vtxbatch *batches, Gfx *gdl, s32 
 	s32 numvertices;
 	Vtx *batchvertices;
 
-	for (i = 0; gdl[i].dma.cmd != G_ENDDL; i++) {
-		if (gdl[i].dma.cmd == G_VTX) {
+	i = 0;
+	while (true) {
+		intptr_t cmd = gdl[i].dma.cmd;
+		if (cmd == G_ENDDL) break;
+		if (cmd == G_VTX) {
+			if (vertices == NULL) {
+				continue;
+			}
 			batches[batchindex].gdl = gdl;
 			batches[batchindex].gbicmdindex = i;
 			batches[batchindex].type = type;
@@ -3391,7 +3397,6 @@ s32 bgPopulateVtxBatchType(s32 roomnum, struct vtxbatch *batches, Gfx *gdl, s32 
 					batches[batchindex].bbmax.z = z;
 				}
 			}
-
 			if (batches[batchindex].bbmin.x == batches[batchindex].bbmax.x) {
 				batches[batchindex].bbmax.x++;
 			}
@@ -3414,6 +3419,7 @@ s32 bgPopulateVtxBatchType(s32 roomnum, struct vtxbatch *batches, Gfx *gdl, s32 
 
 			batchindex++;
 		}
+		i++;
 	}
 
 	return batchindex;
@@ -3433,7 +3439,6 @@ void bgFindRoomVtxBatches(s32 roomnum)
 		if (gdl != NULL) {
 			while (gdl) {
 				for (i = 0; gdl[i].dma.cmd != G_ENDDL; i++) {
-					// if gSPVertex
 					if (gdl[i].dma.cmd == G_VTX) {
 						batchindex++;
 					}
@@ -3448,7 +3453,6 @@ void bgFindRoomVtxBatches(s32 roomnum)
 
 			while (gdl) {
 				for (i = 0; gdl[i].dma.cmd != G_ENDDL; i++) {
-					// if gSPVertex
 					if (gdl[i].dma.cmd == G_VTX) {
 						xlucount++;
 					}

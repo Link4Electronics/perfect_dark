@@ -19477,6 +19477,10 @@ void doorPlayOpeningSound(s32 soundtype, struct prop *prop)
 
 	psStopSound(prop, PSTYPE_DOOR, 0xffff);
 
+	if (prop == NULL) {
+		return;
+	}
+
 	if (g_Vars.in_cutscene
 			&& (prop->type == PROPTYPE_OBJ || prop->type == PROPTYPE_DOOR)
 			&& (prop->obj->flags3 & OBJFLAG3_AUTOCUTSCENESOUNDS) == 0) {
@@ -19553,6 +19557,10 @@ void doorPlayClosingSound(s32 soundtype, struct prop *prop)
 	s32 sound3 = 0;
 
 	psStopSound(prop, PSTYPE_DOOR, 0xffff);
+
+	if (prop == NULL) {
+		return;
+	}
 
 	if (g_Vars.in_cutscene
 			&& (prop->type == PROPTYPE_OBJ || prop->type == PROPTYPE_DOOR)
@@ -19836,6 +19844,10 @@ void doorFinishClose(struct doorobj *door)
  */
 void doorSetMode(struct doorobj *door, s32 newmode)
 {
+	if (door == NULL) {
+		return;
+	}
+
 	if (newmode == DOORMODE_OPENING) {
 		if (door->mode == DOORMODE_IDLE || door->mode == DOORMODE_WAITING) {
 			doorStartOpen(door);
@@ -19870,6 +19882,10 @@ void doorsRequestMode(struct doorobj *door, s32 newmode)
 	struct doorobj *sibling;
 
 	s32 siblingmode = newmode;
+
+	if (door == NULL) {
+		return;
+	}
 
 	if ((door->base.flags2 & OBJFLAG2_AIRLOCKDOOR) && newmode == DOORMODE_OPENING) {
 		siblingmode = DOORMODE_CLOSING;

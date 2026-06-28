@@ -261,7 +261,7 @@ struct model *body0f02ce8c(s32 bodynum, s32 headnum, struct modeldef *bodymodeld
 
 			modelmgrAttachHead(model, node, headmodeldef);
 
-			if ((s16)*(s32 *)&headmodeldef->skel == SKEL_HEAD) {
+			if ((s16)(uintptr_t)headmodeldef->skel == SKEL_HEAD) {
 				struct modelnode *node2;
 
 				if (!sunglasses) {
@@ -671,7 +671,7 @@ void bodyCalculateHeadOffset(struct modeldef *headmodeldef, s32 headnum, s32 bod
 	}
 #endif
 
-	if ((s16)(*(s32 *)&headmodeldef->skel) == SKEL_HEAD) {
+	if ((s16)(uintptr_t)headmodeldef->skel == SKEL_HEAD) {
 #if VERSION >= VERSION_JPN_FINAL
 		if (g_HeadsAndBodies[headnum].type == g_HeadsAndBodies[bodynum].type && offset == 0) {
 			return;

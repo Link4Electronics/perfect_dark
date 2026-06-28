@@ -794,6 +794,9 @@ void setupCreateCctv(struct cctvobj *cctv, s32 cmdindex)
 
 	if (cctv->lookatpadnum >= 0) {
 		struct coord lenspos;
+		if (!obj->model) {
+			return;
+		}
 		union modelrodata *lens = modelGetPartRodata(obj->model->definition, MODELPART_CCTV_CASING);
 		struct pad pad;
 		f32 xdiff;
@@ -1147,7 +1150,7 @@ void setupCreateDoor(struct doorobj *door, s32 cmdindex)
 		// The sibling door is stored as a relative command number,
 		// but at runtime it's a pointer.
 		if (door->sibling) {
-			siblingcmdindex = *(s32 *) &door->sibling + cmdindex;
+			siblingcmdindex = (s32)(uintptr_t)door->sibling + cmdindex;
 			door->sibling = (struct doorobj *) setupGetCmdByIndex(siblingcmdindex);
 		}
 
@@ -1470,13 +1473,13 @@ static void setupMarkLiftDoors()
 			struct liftobj *lift = (struct liftobj *)obj;
 			for (int i = 0; i < ARRAYCOUNT(lift->doors); i++) {
 				if (lift->doors[i]) {
-					s32 doorindex = index + *(s32*)&lift->doors[i];
+					s32 doorindex = index + (s32)(uintptr_t)lift->doors[i];
 					struct doorobj *door = (struct doorobj *)setupGetCmdByIndex(doorindex);
 					// we use this 'extra1' field here to mark the door, since its not used anywhere else
 					door->extra1 = 1;
 
 					if (door->sibling) {
-						s32 siblingidx = *(s32 *) &door->sibling + doorindex;
+						s32 siblingidx = (s32)(uintptr_t)door->sibling + doorindex;
 						struct doorobj *sibling = (struct doorobj *) setupGetCmdByIndex(siblingidx);
 						sibling->extra1 = 1;
 					}
@@ -1684,7 +1687,7 @@ void setupCreateProps(s32 stagenum)
 
 						for (i = 0; i < ARRAYCOUNT(lift->doors); i++) {
 							if (lift->doors[i]) {
-								lift->doors[i] = (struct doorobj *)setupGetCmdByIndex(index + *(s32*)&lift->doors[i]);
+								lift->doors[i] = (struct doorobj *)setupGetCmdByIndex(index + (s32)(uintptr_t)lift->doors[i]);
 							}
 						}
 

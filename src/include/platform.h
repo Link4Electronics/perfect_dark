@@ -31,6 +31,11 @@
 #elif defined(__arm__) || defined(_M_ARM)
 	// assume armv7
 	#define PLATFORM_ARM 7
+#elif defined(__powerpc64__) || defined(__ppc64__) || defined(_ARCH_PPC64)
+	#define PLATFORM_PPC64 1
+	#define PLATFORM_64BIT 1
+#elif defined(__powerpc__) || defined(__ppc__) || defined(_ARCH_PPC)
+	#define PLATFORM_PPC 1
 #else
 	#error "Unknown CPU arch."
 #endif

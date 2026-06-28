@@ -1313,12 +1313,21 @@ typedef union {
  *  Graphics DMA Packet
  */
 #ifdef PLATFORM_64BIT
+#ifdef PLATFORM_BIG_ENDIAN
+typedef struct {
+    intptr_t par : 32;
+    intptr_t cmd : 8;
+    intptr_t len : 24;
+    uintptr_t addr;
+} Gdma;
+#else
 typedef struct {
     intptr_t par : 24;
     intptr_t cmd : 8;
     intptr_t len : 32;
     uintptr_t addr;
 } Gdma;
+#endif
 #else
 typedef struct {
 #ifdef PLATFORM_BIG_ENDIAN
@@ -1340,17 +1349,49 @@ typedef struct {
  */
 typedef struct {
 #ifdef PLATFORM_BIG_ENDIAN
-	int cmd:8;
-	int pad:24;
+#ifdef PLATFORM_64BIT
+	int               pad0;     // bytes 0-3 (w0 low padding)
+	int               cmd:8;    // byte 4 = N64 w0 byte 0
+	int               pad1:24;  // bytes 5-7 = N64 w0 bytes 1-3
+	int               pad2;     // bytes 8-11 (w1 low padding)
 #else
-    int pad:24;
-    int cmd:8;
+	int               cmd:8;
+	int               pad:24;
 #endif
-	Tri tri;
+	Tri               tri;      // bytes 12-15 on 64-bit, bytes 4-7 on 32-bit
+#else
+#ifdef PLATFORM_64BIT
+	int               pad0:24;  // bytes 0-2 = N64 w0 bytes 1-3
+	int               cmd:8;    // byte 3 = N64 w0 byte 0
+	int               pad1;     // bytes 4-7 (w0 high padding)
+#else
+	int               pad:24;
+	int               cmd:8;
+#endif
+	Tri               tri;      // bytes 8-11 on 64-bit, bytes 4-7 on 32-bit
+#endif
 } Gtri;
 
 typedef struct {
 #ifdef PLATFORM_BIG_ENDIAN
+#ifdef PLATFORM_64BIT
+	unsigned char pad0[4];  // bytes 0-3
+	unsigned char cmd:8;    // byte 4
+	unsigned char pad1:8;   // byte 5
+	unsigned char z4:4;     // byte 6
+	unsigned char z3:4;
+	unsigned char z2:4;     // byte 7
+	unsigned char z1:4;
+	unsigned char pad2[4];  // bytes 8-11
+	unsigned char y4:4;     // byte 12
+	unsigned char x4:4;
+	unsigned char y3:4;     // byte 13
+	unsigned char x3:4;
+	unsigned char y2:4;     // byte 14
+	unsigned char x2:4;
+	unsigned char y1:4;     // byte 15
+	unsigned char x1:4;
+#else
 	unsigned char cmd:8;
 	unsigned char pad:8;
 	unsigned char z4:4;
@@ -1365,6 +1406,7 @@ typedef struct {
 	unsigned char x2:4;
 	unsigned char y1:4;
 	unsigned char x1:4;
+#endif
 #else
 	unsigned char z1:4;
 	unsigned char z2:4;
@@ -1423,6 +1465,9 @@ typedef struct {
 
 typedef struct {
 #ifdef PLATFORM_BIG_ENDIAN
+#ifdef PLATFORM_64BIT
+	unsigned char  pad[4];
+#endif
 	unsigned char  cmd;
 	unsigned char  lodscale;
 	unsigned char  tile;
@@ -1567,6 +1612,9 @@ typedef struct {
 // 88888888 99999999 9999aaaa aaaaaaaa
 typedef struct {
 #ifdef PLATFORM_BIG_ENDIAN
+#ifdef PLATFORM_64BIT
+	unsigned char    pad[4];
+#endif
 	unsigned int cmd:8;
 	unsigned int unk08:2;
 	unsigned int unk0a:2;
@@ -1595,19 +1643,30 @@ typedef struct {
 
 typedef struct {
 #ifdef PLATFORM_BIG_ENDIAN
-	unsigned int cmd:8;
-	unsigned int unk08:4;
-	unsigned int unk0c:4;
-	unsigned int unk10:16;
-	unsigned int seg:8;
-	unsigned int offset:24;
+#ifdef PLATFORM_64BIT
+	int              pad1;
+	unsigned int     cmd:8;
+	unsigned int     unk08:4;
+	unsigned int     unk0c:4;
+	unsigned int     unk10:16;
+	int              pad2;
+	unsigned int     seg:8;
+	unsigned int     offset:24;
 #else
-	unsigned int unk10:16;
-	unsigned int unk0c:4;
-	unsigned int unk08:4;
-	unsigned int cmd:8;
-	unsigned int offset:24;
-	unsigned int seg:8;
+	unsigned int     cmd:8;
+	unsigned int     unk08:4;
+	unsigned int     unk0c:4;
+	unsigned int     unk10:16;
+	unsigned int     seg:8;
+	unsigned int     offset:24;
+#endif
+#else
+	unsigned int     unk10:16;
+	unsigned int     unk0c:4;
+	unsigned int     unk08:4;
+	unsigned int     cmd:8;
+	unsigned int     offset:24;
+	unsigned int     seg:8;
 #endif
 } Gvtx;
 
@@ -1652,8 +1711,8 @@ typedef union {
 } Gfx;
 
 #ifdef PLATFORM_BIG_ENDIAN
-#define GFX_W0_BYTE(i) (i)
-#define GFX_W1_BYTE(i) (4 + (i))
+#define GFX_W0_BYTE(i) (4 + (i))
+#define GFX_W1_BYTE(i) (12 + (i))
 #elif PLATFORM_64BIT
 #define GFX_W0_BYTE(i) (3 - (i))
 #define GFX_W1_BYTE(i) (11 - (i))

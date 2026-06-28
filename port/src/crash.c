@@ -285,6 +285,8 @@ static void crashHandler(s32 sig, siginfo_t *siginfo, void *ctx)
 		pc = (void *)ucontext->uc_mcontext.pc;
 #elif defined(PLATFORM_ARM)
 		pc = (void *)ucontext->uc_mcontext.arm_pc;
+#elif defined(PLATFORM_PPC64) || defined(PLATFORM_PPC)
+		pc = (void *)ucontext->uc_mcontext.regs->nip;
 #endif
 	}
 

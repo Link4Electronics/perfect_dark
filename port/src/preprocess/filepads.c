@@ -47,6 +47,7 @@ static u32 convertPads(u8 *dst, u32 dstpos, u8 *src, u32 srcpos, int num_pads)
 	u16 *dst_offsets = (u16 *) &dst[dstpos];
 
 	dstpos += num_pads * sizeof(u16);
+	dstpos = (dstpos + 3) & ~3;
 
 	for (int i = 0; i < num_pads; i++) {
 		srcpos = PD_BE16(src_offsets[i]);
